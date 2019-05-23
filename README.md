@@ -1,6 +1,5 @@
-# Natural Language Processing & Information Retrieval, S/S, 2019
-
-T2M - Classify Movie Genre by Script
+# NLP & IR, S/S, 2019
+# Team T2M - Classify Movie Genre by Script
 
 작성환경 : Python 3.7, Ubuntu 16.04
 실행파일 : main.py 
