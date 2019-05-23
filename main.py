@@ -5,8 +5,7 @@
 
 # Project Subject : Movie Genre Classification by Script
 # github link : https://github.com/jesn1219/nlp_t2m
-
-
+#
 
 from glob import *
 import pickle
