@@ -25,41 +25,63 @@ class DataReposit :
 
     # Constructor
     def __init__(self) :
-        print("DataReposit Object init")
+        print("Create DataReposit Object ")
     
+    # indexing
     def indexing(self) :
         self.indexedSet = indexingScripts()
+    
+    # 벡터 공간을 만듬. 만들어진 벡터 공간 틀을 이용해 나중에 장르 벡터, 쿼리 벡터들을 만든다. 
     def createModelFrame(self) :
         self.modelFrame = []
         for g in self.indexedSet :
+            # indexedSet 안의 인덱싱 된 모델 g
             # g : ['Genre Name', [ (term, tf), (term2, tf), ........ ]]
             for t in g[1] :
                 # t : (term, tf)
                 if [t[0],0] in self.modelFrame :
+                    # 이미 modelFrame에 해당 단어가 있다면 스킵
                     continue
                 else :
+                    # 틀에 단어 추가
                     self.modelFrame.append([t[0], 0])
     
+    # 인덱스된 셋들을 가지고 벡터를 만든다.
     def makeModel(self) :
         for g in self.indexedSet :
+            # g : 인덱싱 된 장르 모델
             # g : ['Genre Name', [ (term, tf), (term2, tf), ..... ]
             
-            # init genre Model using modelFrame
+            # 장르 벡터 모델을 초기화한다. modelFrame 사용
             tmpModel = [ g[0], self.modelFrame[:] ]
             for word in g[1] :
+                # 인덱싱된 단어들 하나씩 장르 벡터 모델에 추가
                 # word : ( term, tf )
                 if [word[0],0] in tmpModel[1] :
                     tmpIdx = tmpModel[1].index([word[0],0])
                     tmpModel[1][tmpIdx] = [word[0], word[1]]
+            
+            # 만들어진 장르 벡터 모델은 modelSet 리스트에 저장된다
             self.modelSet.append(tmpModel)
-    def scaleModelSet(self) :
-        modelScaler(self.modelSet,1000)
+
+    # modelSet을 스케일링.
+    def scaleModelSet(self,size) :
+        modelScaler(self.modelSet,size)
+    
+    # 장르 추측해내기.
     def predictGenre(self) :
-        genreDistance = []
+        
+        distances = []
+
+
         for g in self.modelSet :
-            tmp = calModelDistance(g,self.queryModel[0])
-            genreDistance.append( [g[0], tmp] )
-        ret = sorted(genreDistance, key = lambda i : i[1], reverse = False)
+            # 각 장르 벡터 모델 g 에 대해 계산
+            distance = calModelDistance(g, self.queryModel[0]) # queryModel : [ ['title', [[term, tf], [term2, tf2]...] ] ]
+            distances.append( [g[0], distance] )
+        
+        # distances 정렬
+        ret = sorted(distances, key = lambda i : i[1], reverse = False)
+        
         print(ret)
 
 
@@ -167,8 +189,9 @@ if not makeNewIndexData :
         dataSource = pickle.load(file)
         dataSource.makeModel()
     
+    
 
-dataSource.scaleModelSet()
+dataSource.scaleModelSet(1000)
 #dataSource.showModel(False)
 
 
