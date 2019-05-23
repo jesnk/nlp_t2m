@@ -215,12 +215,12 @@ if makeNewModelData :
     dataSource.makeModel()
     
     # 만든 장르 벡터 모델 저장 
-    with open("indexedModel.t2m", "wb") as file :
+    with open("savedModel.t2m", "wb") as file :
         pickle.dump(dataSource, file)
         print("Model Saved")
 else :
     # 장르 벡터 모델 불러오기 
-    with open("indexedModel.t2m", "rb") as file :
+    with open("savedModel.t2m", "rb") as file :
         dataSource = pickle.load(file)
         dataSource.makeModel()
 # 장르 벡터 모델 스케일링
