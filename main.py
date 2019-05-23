@@ -82,10 +82,10 @@ class DataReposit :
         # distances 정렬
         ret = sorted(distances, key = lambda i : i[1], reverse = False)
         
-        print(ret)
+        return ret
 
-
-    def showModel(self,isQ) :
+    # 시각화, 그래프 출력
+    def showModel(self) :
         fig = plt.figure()
         tmp_idx = 1
         for model in self.modelSet :
@@ -100,7 +100,7 @@ class DataReposit :
             ax_tmp.xaxis.set_major_formatter(plt.NullFormatter())
             #ax_tmp.yaxis.set_major_locator(plt.NullLocator())
             tmp_idx += 1
-        if isQ :
+        try :
             axQ = fig.add_subplot(6,5,tmp_idx)
             x = [i[0] for i in self.queryModel[0][1][:]]
             y = [i[1] for i in self.queryModel[0][1][:]]
@@ -108,11 +108,16 @@ class DataReposit :
             axQ.set_title('Query : %s' % self.queryModel[0][0])
             axQ.xaxis.set_major_formatter(plt.NullFormatter())
             #axQ.yaxis.set_major_locator(plt.NullLocator())
-            
+        except (IndexError) : 
+            # 쿼리 벡터가 없을 때 except
+            print('')
+        
+
         plt.subplots_adjust(hspace = 1.0, wspace = 0.1)
         plt.show()
     
 
+# 벡터 모델 스케일러
 def modelScaler(modelSet,scale) :
     total_tf = 0
     for model in modelSet :
@@ -125,29 +130,39 @@ def modelScaler(modelSet,scale) :
             term[1] = term[1] * 100/total_tf
 
 
-def query(modelFrame) :
-    print("input name of script")
+
+# 쿼리 날리기
+def querying(modelFrame) :
+    print("Input movie name to Classify Genre. ex) for Blade.txt :  >> Blade   ")
+    print("If you want to see Graph, type >> show  ")
+    
     nameBuf = input()
     if nameBuf == 'show' :
-        dataSource.showModel(True)
+        dataSource.showModel()
         return False
     text = textFileImport(nameBuf)
     if text == '' :
-        print("There is not %s" % nameBuf)
+        print("There is not %s.txt in ./input Directory" % nameBuf)
         return False
-    print("There is %s" % nameBuf)
-
+    
+    print("Query Processing.. : %s " % nameBuf)
     indexedQuery = queryProcessing(text,nameBuf)
     queryModel = makeModel_query(indexedQuery, modelFrame)
     return queryModel
 
-def calModelDistance(genre, query) :
+
+
+# 벡터 모델 유사도 계산
+def calModelDistance(genreVector, queryVector) :
     # genre : [ 'title', [ [term,tf], [term, tf] .. ]]
     total_Distance = 0
-    for idx in range(0, len(genre)) :
-        total_Distance +=  np.square(genre[1][idx][1] - query[1][idx][1])
+    for idx in range(0, len(genreVector)) :
+        total_Distance +=  np.square(genreVector[1][idx][1] - queryVector[1][idx][1])
     return total_Distance
 
+
+
+# 쿼리로 들어온 스크립트 벡터모델로 만들기
 def makeModel_query(indexedQuery, modelFrame) :
     
     tmpModel = [ indexedQuery[0], modelFrame[:] ]
@@ -159,7 +174,9 @@ def makeModel_query(indexedQuery, modelFrame) :
     modelScaler([tmpModel],1000)
 
     return tmpModel
-    
+
+
+# input 폴더 안에서 name 파일을 찾아 읽고 반환 
 def textFileImport(name) :
     if not (glob("./input/%s.txt" % name)) :
         return False
@@ -168,124 +185,69 @@ def textFileImport(name) :
         text = f.read()
         return text
 
+# 영화 'name' 의 장르 반환 
+def labeledGenre(name) :
+    path_data = './data'
+    genre_list = os.listdir(path_data)
+    ret = []
+    for gd in genre_list :
+        if glob("./data/%s/%s.txt" % (gd, name)) :
+            ret.append(gd)
+
+    return ret
+
 
 
 print("Hello")
-makeNewIndexData = False 
+
+
+# makeNewModelData :
+# True 이면, 장르 벡터 모델을 생성한다. 
+# False이면, 계산하여 저장해 놓은 모델을 불러온다 indexedModel.t2m 으로 저장되어있음
+
+makeNewModelData = False 
 dataSource = DataReposit()
 
-if makeNewIndexData :
+if makeNewModelData :
+    # 장르 벡터 모델 생성
     dataSource = DataReposit()
     dataSource.indexing()
     dataSource.createModelFrame()
     dataSource.makeModel()
+    
+    # 만든 장르 벡터 모델 저장 
     with open("indexedModel.t2m", "wb") as file :
         pickle.dump(dataSource, file)
         print("Model Saved")
-    
-
-if not makeNewIndexData :
+else :
+    # 장르 벡터 모델 불러오기 
     with open("indexedModel.t2m", "rb") as file :
         dataSource = pickle.load(file)
         dataSource.makeModel()
-    
-    
-
+# 장르 벡터 모델 스케일링
 dataSource.scaleModelSet(1000)
-#dataSource.showModel(False)
 
 
+
+# main 
 while (True) :
-    queryBuf = query(dataSource.modelFrame)
+    queryBuf = querying(dataSource.modelFrame)
     if not queryBuf :
         continue
     else :
         dataSource.queryModel = [queryBuf]
-        dataSource.predictGenre()
+        result = dataSource.predictGenre()
+        
+        rankIdx = 1
+        for i in result :
+            print("#%2d : %10s   Val : %6.2f" %(rankIdx, i[0], i[1] ))
+            
+            rankIdx +=1
+             
+        print("Actual Labeled Genre : ",  end = '')
+        buf = labeledGenre(dataSource.queryModel[0][0]) 
+        for w in buf  :
+            print("%s  " % w, end = '' )
+        print("")
         #dataSource.showModel(True)
 
-
-
-
-'''
-def textFileImport(genre) :
-    scripts = []
-    for textFile in glob("./data/%s/*.txt" % genre) :
-        scripts.append(textFile)
-    return scripts
-'''
-
-
-
-
-
-### Load Indexed Data or Do Indexing
-'''
-if makeNewIndexData :
-    with open("indexedModel.t2m", "wb") as file :
-        pickle.dump(dataSource, file)
-    print("Index saved")
-else :
-    with open("indexedModel.t2m", "rb") as file :
-        dataSource = pickle.load(file)
-'''
-
-
-
-
-
-'''                
-
-
-def detectGenres() :
-    Genres = []
-    for dir in glob("./data/*") :
-        Genres.append(dir[7:])
-    return Genres  
-
-def dataImport() :
-    dataset = []
-    Genres = detectGenres()
-    for genre in Genres :
-        data = textFileImport(genre)
-        dataset.append([genre, data])    
-    return dataset
-'''
-'''
-def makeVSM(entireWordDics) :
-    resultVSM = []
-    numOfD = len(entireWordDics)
-    
-    # Calculate tf, stored in resultVSM temporary
-    for idxD in range(0,numOfD) :
-        selectedD = entireWordDics[idxD]
-        for term in selectedD :
-            if not (term in termsInfo) :
-                termsInfo.append(term)
-                resultVSM.append([])
-                for i in range(0,numOfD) :
-                    resultVSM[termsInfo.index(term)].append(0)
-                
-                resultVSM[termsInfo.index(term)][idxD] = selectedD[term]
-            else :
-                resultVSM[termsInfo.index(term)][idxD] = selectedD[term]
-
-    # tf - idf calculate
-    for term in resultVSM :
-        df = 0
-        for tfIdx in range(0, len(entireWordDics) ) :
-            if term[tfIdx] != 0 :
-                df = df + 1
-        
-        idf = df / ( 1 + len(entireWordDics) )
-        #idf = math.log(2,idf)
-        globalDfInfo.append(df)
-    
-        for tfIdx in range(0, len(entireWordDics) ) :
-            if term[tfIdx] != 0 :
-                term[tfIdx] = term[tfIdx]*idf
-    
-    print("END makeVSM")        
-    return resultVSM
-
-'''
