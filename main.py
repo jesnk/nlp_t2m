@@ -114,7 +114,28 @@ class DataReposit :
 
         plt.subplots_adjust(hspace = 1.0, wspace = 0.1)
         plt.show()
-    
+
+
+
+
+# @return [ ['title', [ [rank1, distance], [rank2, distance] ] , [ 'title2', [ [rank1, distance] ..... 
+def calGenreSimilarity(genreModelset, queryModelset) :
+    result = [] 
+    for queryModel in queryModelset :
+        distances = []
+        # distances : [ [ 'genre1', distance ], [ 'genre2', distance] ... ]
+        for genreModel in genreModelset :
+            distance = calModelDistance(genreModel, queryModel)
+            distance.append( [g[0], distance] )
+        result_unit = [queryModel[0],  sorted(distances, key = lambda i : i[1], reverse = False) ]
+        # result_unit : [ 'title', [ [genre1, distance], [genre2, distance], ....(sorted list) 
+        result.append(result_unit)
+    return result
+
+def loadInputFiles_and_makeQueryModel() :
+
+
+
 
 # 벡터 모델 스케일러
 def modelScaler(modelSet,scale) :
@@ -131,6 +152,8 @@ def modelScaler(modelSet,scale) :
 
 
 # 쿼리 날리기
+# @param[in] modelFrame : use to make query vector
+# @return   queryModel : vector model which was query
 def querying(modelFrame) :
     print("Input movie name to Classify Genre. ex) for Blade.txt :  >> Blade   ")
     print("If you want to see Graph, type >> show  ")
@@ -226,9 +249,11 @@ else :
 # 장르 벡터 모델 스케일링
 dataSource.scaleModelSet(1000)
 
+calGenreSimilarity(dataSource.modelSet, )
 
 
-# main 
+'''
+# querying
 while (True) :
     queryBuf = querying(dataSource.modelFrame)
     if not queryBuf :
@@ -249,4 +274,52 @@ while (True) :
             print("%s  " % w, end = '' )
         print("")
         #dataSource.showModel(True)
+
+path_testifyResult = "./"
+path_data = "./data"
+
+# testify all the scripts in input Folder
+# @param [in]   datasource
+# @param [in]   path to save result
+
+def testify() :
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
