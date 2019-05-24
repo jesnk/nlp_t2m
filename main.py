@@ -126,14 +126,14 @@ def calGenreSimilarity(genreModelset, queryModelset) :
         # distances : [ [ 'genre1', distance ], [ 'genre2', distance] ... ]
         for genreModel in genreModelset :
             distance = calModelDistance(genreModel, queryModel)
-            distance.append( [g[0], distance] )
+            distances.append( [genreModel[0], distance] )
         result_unit = [queryModel[0],  sorted(distances, key = lambda i : i[1], reverse = False) ]
         # result_unit : [ 'title', [ [genre1, distance], [genre2, distance], ....(sorted list) 
         result.append(result_unit)
     return result
 
 def loadInputFiles_and_makeQueryModel() :
-
+    print("")
 
 
 
@@ -185,6 +185,23 @@ def calModelDistance(genreVector, queryVector) :
 
 
 # 쿼리로 들어온 스크립트 벡터모델로 만들기
+
+# make_queryModel (indexedQuerySet, modelFrame) 
+#
+
+def make_and_scale_queryModel (indexedQuerySet, modelFrame) :
+    queryModelSet = []
+    for indexedQuery in indexedQuerySet[:] :
+        queryModel_tmp = [ indexedQuery[0], modelFrame[:]] 
+        for word in indexedQuery[1] :
+            if [ word[0],0 ] in queryModel_tmp[1] :
+                tmpIdx = queryModel_tmp[1].index([word[0],0])
+                queryModel_tmp[1][tmpIdx] = [word[0], word[1]]
+        queryModelSet.append(queryModel_tmp) 
+    modelScaler(queryModelSet, 1000)
+    return queryModelSet
+
+# 삭제 예정, 위의 것으로 대체 
 def makeModel_query(indexedQuery, modelFrame) :
     
     tmpModel = [ indexedQuery[0], modelFrame[:] ]
@@ -249,7 +266,34 @@ else :
 # 장르 벡터 모델 스케일링
 dataSource.scaleModelSet(1000)
 
-calGenreSimilarity(dataSource.modelSet, )
+
+path_input = "./input"
+
+# return 
+def test_getSimilarity(path_input) :
+    indexed_inputSet = indexingTestFiles(path_input)
+    queryModelset = make_and_scale_queryModel(indexed_inputSet, dataSource.modelFrame)
+    similarityResult = calGenreSimilarity(dataSource.modelSet, queryModelset)
+    return similarityResultSet
+
+def test_getPrecision(similarityResultSet, rankRange) :
+    precisionResult = [] 
+    for sR  in similarityResultsSet :
+        precisionResult_unit = [sR[0], 0]
+        name_tmp = sR[0]
+        genreLabels_tmp = labeledGenre(name_tmp) 
+        
+        for rankIdx in range(rankRange) :
+            rankIdxGenre= sR[1][rankIdx][0]
+
+
+
+
+print("testPoint")
+
+
+
+# calGenreSimilarity(dataSource.modelSet, )
 
 
 '''

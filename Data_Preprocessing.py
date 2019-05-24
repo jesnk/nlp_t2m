@@ -59,6 +59,24 @@ def indexingScripts() :
     
     return total_freq
 
+def indexingTestFiles(path_input) :
+    file_list = os.listdir(path_input) 
+    ret_list = [] 
+    for f in file_list[:] :
+        if not (f[-4:] == ".txt") :
+            continue
+
+        t = open(path_input+"/"+f, 'rt', encoding = 'utf-8') 
+        text = t.read()
+        preprocessed = preprocessing(text)
+        fdist = FreqDist(preprocessed)
+        # 100개 단어를 추린다. 이거 바꿔볼만 한듯
+        freq = [ f[:-4] , fdist.most_common(100)]
+        ret_list.append(freq)
+    return ret_list 
+
+
+
 def queryProcessing(text,name) :
     data = text
     preprocessed = preprocessing(data)
