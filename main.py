@@ -162,6 +162,9 @@ def querying(modelFrame) :
     if nameBuf == 'show' :
         dataSource.showModel()
         return False
+    if nameBuf == 'testify' :
+        testify(path_testdir)
+        return False
     text = textFileImport(nameBuf)
     if text == '' :
         print("There is not %s.txt in ./input Directory" % nameBuf)
@@ -267,36 +270,44 @@ else :
 dataSource.scaleModelSet(1000)
 
 
-path_input = "./input"
+path_testdir = "./input"
 
 # return 
 def test_getSimilarity(path_input) :
     indexed_inputSet = indexingTestFiles(path_input)
     queryModelset = make_and_scale_queryModel(indexed_inputSet, dataSource.modelFrame)
-    similarityResult = calGenreSimilarity(dataSource.modelSet, queryModelset)
+    similarityResultSet = calGenreSimilarity(dataSource.modelSet, queryModelset)
     return similarityResultSet
 
-def test_getPrecision(similarityResultSet, rankRange) :
+def test_getPrecision(similSet, rankRange) :
     precisionResult = [] 
-    for sR  in similarityResultsSet :
-        precisionResult_unit = [sR[0], 0]
+    for sR  in similSet :
+        precisionResult_unit = [sR[0], 0 ,  [] ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르] ]
         name_tmp = sR[0]
         genreLabels_tmp = labeledGenre(name_tmp) 
-        
         for rankIdx in range(rankRange) :
-            rankIdxGenre= sR[1][rankIdx][0]
+            genre_tmp = sR[1][rankIdx][0]
+            if genre_tmp in  genreLabels_tmp :
+                precisionResult_unit[2].append([rankIdx+1,genre_tmp])
+                precisionResult_unit[1] += 1
+        precisionResult.append(precisionResult_unit); 
+    return precisionResult
 
 
-
-
-print("testPoint")
-
-
+def testify(path_input) :
+    similSet = test_getSimilarity(path_input)
+    
+    precision_of_testSet = test_getPrecision(similSet, 1)
+    testSize = len(precision_of_testSet)
+    precisionRate = 0
+    for i in precision_of_testSet :
+        print("%30s : %2d ; %s" %(i[0], i[1], i[2]))
+        precisionRate += i[1]
+    precisionRate = precisionRate /  testSize
+    print("Average Val : %f" % precisionRate) 
 
 # calGenreSimilarity(dataSource.modelSet, )
 
-
-'''
 # querying
 while (True) :
     queryBuf = querying(dataSource.modelFrame)
@@ -325,12 +336,6 @@ path_data = "./data"
 # testify all the scripts in input Folder
 # @param [in]   datasource
 # @param [in]   path to save result
-
-def testify() :
-
-
-
-'''
 
 
 
