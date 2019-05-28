@@ -15,6 +15,15 @@ import numpy as np
 import os
 from excel_write import *
 
+
+
+# Flag class
+class Flags :
+    def __init__(self) :
+        self.exit_flag = False
+
+
+
 # Class for Store data
 class DataReposit :
     # indexed data : [ ['Genre', ['Title', [ 
@@ -151,11 +160,10 @@ def modelScaler(modelSet,scale) :
             term[1] = term[1] * 100/total_tf
 
 
-
 # 쿼리 날리기
 # @param[in] modelFrame : use to make query vector
 # @return   queryModel : vector model which was query
-def querying(modelFrame) :
+def querying(modelFrame, flags) :
     print("Input movie name to Classify Genre. ex) for Blade.txt :  >> Blade   ")
     print("If you want to see Graph, type >> show  ")
     
@@ -164,8 +172,10 @@ def querying(modelFrame) :
         dataSource.showModel()
         return False
     if nameBuf == 'testify' :
-
         testify(path_testdir)
+        return False
+    if nameBuf == 'exit' :
+        flags.exit_flag = True
         return False
     text = textFileImport(nameBuf)
     if text == '' :
@@ -311,10 +321,14 @@ def testify(path_input) :
     return precision_of_testSet
 
 # calGenreSimilarity(dataSource.modelSet, )
+flags = Flags()
 
 # querying
 while (True) :
-    queryBuf = querying(dataSource.modelFrame)
+    queryBuf = querying(dataSource.modelFrame, flags) 
+    if flags.exit_flag == True :
+        print("Terminate Program...")
+        break
     if not queryBuf :
         continue
     else :
