@@ -30,12 +30,11 @@ def saveResult(testResult) :
     result_list.append(("f","g","h"))
     result_list.append(("i","j","k","a"))
     '''
-    result_list = []
-    result_list.append(testResult)
+    result_list = testResult
 
     #sheet1에 list추가.
-    for row_index in range(len(result_list)):
-        sheet1.append(result_list[row_index])
+    for result in result_list:
+        sheet1.append( [result[0], result[1]] )
 
     # excel 저장.
     wb.save(filename=file_name)

@@ -164,6 +164,7 @@ def querying(modelFrame) :
         dataSource.showModel()
         return False
     if nameBuf == 'testify' :
+
         testify(path_testdir)
         return False
     text = textFileImport(nameBuf)
