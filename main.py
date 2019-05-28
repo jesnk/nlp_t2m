@@ -12,7 +12,8 @@ import pickle
 from Data_Preprocessing import *
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
+from excel_write import *
 
 # Class for Store data
 class DataReposit :
@@ -305,6 +306,8 @@ def testify(path_input) :
         precisionRate += i[1]
     precisionRate = precisionRate /  testSize
     print("Average Val : %f" % precisionRate) 
+    saveResult(precision_of_testSet)
+    return precision_of_testSet
 
 # calGenreSimilarity(dataSource.modelSet, )
 
