@@ -294,9 +294,10 @@ def test_getSimilarity(path_input) :
 def test_getPrecision(similSet, rankRange) :
     precisionResult = [] 
     for sR  in similSet :
-        precisionResult_unit = [sR[0], 0 ,  [] ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르] ]
         name_tmp = sR[0]
+        precisionResult_unit = [sR[0], 0 ,  [], labeledGenre(name_tmp)  ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르], 원래 장르 ]
         genreLabels_tmp = labeledGenre(name_tmp) 
+        precisionResult_unit[3] = name_tmp
         for rankIdx in range(rankRange) :
             genre_tmp = sR[1][rankIdx][0]
             if genre_tmp in  genreLabels_tmp :
@@ -305,11 +306,12 @@ def test_getPrecision(similSet, rankRange) :
         precisionResult.append(precisionResult_unit); 
     return precisionResult
 
+# rere
 
 def testify(path_input) :
     similSet = test_getSimilarity(path_input)
     
-    precision_of_testSet = test_getPrecision(similSet, 1)
+    precision_of_testSet = test_getPrecision(similSet, 3)
     testSize = len(precision_of_testSet)
     precisionRate = 0
     for i in precision_of_testSet :
@@ -317,7 +319,7 @@ def testify(path_input) :
         precisionRate += i[1]
     precisionRate = precisionRate /  testSize
     print("Average Val : %f" % precisionRate) 
-    saveResult(precision_of_testSet)
+    save_result_to_excel(precision_of_testSet)
     return precision_of_testSet
 
 # calGenreSimilarity(dataSource.modelSet, )
