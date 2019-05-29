@@ -295,13 +295,14 @@ def test_getPrecision(similSet, rankRange) :
     precisionResult = [] 
     for sR  in similSet :
         name_tmp = sR[0]
-        precisionResult_unit = [sR[0], 0 ,  [], labeledGenre(name_tmp)  ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르], 원래 장르 ]
+        # [ '타이틀' ' 범위 이내 맞춘 빈도', 실제 장르, '정확도 예측값', '맞춘 것만' ]
+        precisionResult_unit = [sR[0], 0, labeledGenre(name_tmp),  sR[1][:], [] ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르], 원래 장르 ]
+        
         genreLabels_tmp = labeledGenre(name_tmp) 
-        precisionResult_unit[3] = name_tmp
         for rankIdx in range(rankRange) :
             genre_tmp = sR[1][rankIdx][0]
             if genre_tmp in  genreLabels_tmp :
-                precisionResult_unit[2].append([rankIdx+1,genre_tmp])
+                precisionResult_unit[4].append([rankIdx+1,genre_tmp])
                 precisionResult_unit[1] += 1
         precisionResult.append(precisionResult_unit); 
     return precisionResult
