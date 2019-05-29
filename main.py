@@ -1,4 +1,4 @@
-
+#-*- coding:utf-8 -*- 
 
 # Team T2M
 # S/S, 2019 Natural Language Processing & Information Retrival
@@ -184,7 +184,7 @@ def querying(modelFrame, flags) :
     
     print("Query Processing.. : %s " % nameBuf)
     indexedQuery = queryProcessing(text,nameBuf)
-    queryModel = makeModel_query(indexedQuery, modelFrame)
+    queryModel = make_model_to_query(indexedQuery, modelFrame)
     return queryModel
 
 
@@ -217,7 +217,7 @@ def make_and_scale_queryModel (indexedQuerySet, modelFrame) :
     return queryModelSet
 
 # 삭제 예정, 위의 것으로 대체 
-def makeModel_query(indexedQuery, modelFrame) :
+def make_model_to_query(indexedQuery, modelFrame) :
     
     tmpModel = [ indexedQuery[0], modelFrame[:] ]
     for word in indexedQuery[1] :
@@ -294,25 +294,25 @@ def test_getSimilarity(path_input) :
 def test_getPrecision(similSet, rankRange) :
     precisionResult = [] 
     for sR  in similSet :
+        precisionResult_unit = [sR[0], 0 ,  [], labeledGenre(name_tmp)  ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르], 원래 장르 ]
         name_tmp = sR[0]
-        # [ '타이틀' ' 범위 이내 맞춘 빈도', 실제 장르, '정확도 예측값', '맞춘 것만' ]
-        precisionResult_unit = [sR[0], 0, labeledGenre(name_tmp),  sR[1][:], [] ] #[ 'title', 잘 예측한 갯수, [랭킹값, 장르], 원래 장르 ]
-        
         genreLabels_tmp = labeledGenre(name_tmp) 
+        precisionResult_unit[4] = name_tmp
+
+
         for rankIdx in range(rankRange) :
             genre_tmp = sR[1][rankIdx][0]
             if genre_tmp in  genreLabels_tmp :
-                precisionResult_unit[4].append([rankIdx+1,genre_tmp])
+                precisionResult_unit[2].append([rankIdx+1,genre_tmp])
                 precisionResult_unit[1] += 1
         precisionResult.append(precisionResult_unit); 
     return precisionResult
 
-# rere
 
 def testify(path_input) :
     similSet = test_getSimilarity(path_input)
     
-    precision_of_testSet = test_getPrecision(similSet, 3)
+    precision_of_testSet = test_getPrecision(similSet, 1)
     testSize = len(precision_of_testSet)
     precisionRate = 0
     for i in precision_of_testSet :
@@ -320,7 +320,7 @@ def testify(path_input) :
         precisionRate += i[1]
     precisionRate = precisionRate /  testSize
     print("Average Val : %f" % precisionRate) 
-    print_and_save_result_to_excel(precision_of_testSet)
+    saveResult(precision_of_testSet)
     return precision_of_testSet
 
 # calGenreSimilarity(dataSource.modelSet, )
@@ -344,10 +344,10 @@ while (True) :
             
             rankIdx +=1
              
-        print("Actual Labeled Genre : ",  end = '')
+        print("Actual Labeled Genre : ",  end = ' ')
         buf = labeledGenre(dataSource.queryModel[0][0]) 
         for w in buf  :
-            print("%s  " % w, end = '' )
+            print("%s  " % w, end = ' ' )
         print("")
         #dataSource.showModel(True)
 
