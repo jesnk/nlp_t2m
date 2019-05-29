@@ -320,7 +320,7 @@ def testify(path_input) :
         precisionRate += i[1]
     precisionRate = precisionRate /  testSize
     print("Average Val : %f" % precisionRate) 
-    save_result_to_excel(precision_of_testSet)
+    print_and_save_result_to_excel(precision_of_testSet)
     return precision_of_testSet
 
 # calGenreSimilarity(dataSource.modelSet, )
