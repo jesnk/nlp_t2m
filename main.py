@@ -131,7 +131,8 @@ class DataReposit :
         # idf setting
         for term in self.modelIdf :
             #print(self.modelIdf[term])
-            self.modelIdf[term] = 1 + math.log(self.modelIdf[term] ,2)
+            #self.modelIdf[term] = 1 + math.log(self.modelIdf[term] ,2)
+            self.modelIdf[term] = 1 + self.modelIdf[term]
             self.modelIdf[term] = 1 / self.modelIdf[term]
             #print(self.modelIdf[term])
               
@@ -292,9 +293,8 @@ def make_and_scale_queryModel (indexedQuery, modelFrame, ds) :
         queryModelSet.append(queryModel_tmp) 
     modelScaler(queryModelSet, 1000)
     
-    
-    queryModel = applying_idf_to_model(ds.modelIdf , queryModelSet[0])
-    
+    queryModel = queryModelSet[0]
+    # queryModel = applying_idf_to_model(ds.modelIdf , queryModelSet[0])
     return queryModel
 
 # 삭제 예정, 위의 것으로 대체 
@@ -369,7 +369,7 @@ dataSource.create_modelFrame()
 
 # 장르 벡터 모델 스케일링
 dataSource.scale_ModelSet(1000)
-dataSource.applying_idf_to_genreModel()
+#dataSource.applying_idf_to_genreModel()
 
 
 path_testdir = "./input"

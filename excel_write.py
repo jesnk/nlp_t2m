@@ -30,6 +30,10 @@ def print_and_save_result_to_excel(testResult) :
     print(str(second_row))
     sheet1.append(second_row)
     # sheet1에 list추가.
+
+    result_len = len(result_list)
+    result_sum = 0
+    result_average = 0
     for result in result_list:
     # Result :
     # [ '타이틀' ' 범위 이내 맞춘 빈도', 실제 장르, '정확도 예측값', '맞춘 것만' ]
@@ -40,6 +44,10 @@ def print_and_save_result_to_excel(testResult) :
         result_row = [result[0], result[1]/tmp_len, str(result[2]), result[3][0][0], result[3][1][0], result[3][2][0] ]
         print(str(result_row))
         sheet1.append( result_row )
+        result_sum += result_row[1]
+    result_average = result_sum / result_len
+    sheet1.append(["average precision :", result_average])
+
     last_row = ["#########", "#########"]
     print(str(last_row))
     sheet1.append(last_row)
