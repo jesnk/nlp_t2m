@@ -131,7 +131,7 @@ class DataReposit :
         # idf setting
         for term in self.modelIdf :
             #print(self.modelIdf[term])
-            self.modelIdf[term] = math.pow(1 + self.modelIdf[term],3)
+            self.modelIdf[term] = math.log(1 + self.modelIdf[term],2)
             # idfval
             self.modelIdf[term] = 1 / self.modelIdf[term]
             
@@ -342,7 +342,7 @@ def labeledGenre(name) :
 # True 이면, 장르 벡터 모델을 생성한다. 
 # False이면, 계산하여 저장해 놓은 모델을 불러온다 indexedModel.t2m 으로 저장되어있음
 
-makeNewModelData = False
+makeNewModelData = False 
 dataSource = DataReposit()
 path_testifyResult = "./"
 path_data = "./data"

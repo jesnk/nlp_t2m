@@ -82,6 +82,6 @@ def queryProcessing(text,name) :
     preprocessed = preprocessing(data)
     fdist = FreqDist(preprocessed)
 
-    freq = [name, fdist.most_common(100)]
+    freq = [name, fdist.most_common(300)]
     return freq
 
