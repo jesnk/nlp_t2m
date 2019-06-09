@@ -8,6 +8,7 @@ from nltk import FreqDist
 import os
 
 ## Data Preprocessing
+
 def preprocessing(text):
     # 1.Tokenize into words
     tokens = [word for sent in nltk.sent_tokenize(text)
@@ -28,7 +29,20 @@ def preprocessing(text):
 
     return tokens
 
-    
+
+## Pos Tagging and estract
+
+def extractNouns(tokens):
+    tagged_list = pos_tag(tokens)
+    nouns_list = [t[0] for t in tagged_list if t[1] == "NN" or t[1] == "NNP"]
+    return nouns_list
+
+def extractVerbs(tokens):
+    tagged_list = pos_tag(tokens)
+    verbs_list = [t[0] for t in tagged_list if t[1] == "VB"]
+    return nouns_list
+
+
 #nltk.download()
 
 ## Indexing
