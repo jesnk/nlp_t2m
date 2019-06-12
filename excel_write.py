@@ -53,3 +53,45 @@ def print_and_save_result_to_excel(testResult) :
     sheet1.append(last_row)
     # excel 저장.
     wb.save(filename=file_name)
+
+
+def print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average):
+    file_name = 'result_hammingloss.xlsx'
+
+    if os.path.isfile(file_name):
+        # file 있을시 load
+        wb = openpyxl.load_workbook(file_name)
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+    else:
+        # file 없을시 생성
+        wb = openpyxl.Workbook()
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+        # 시트의 이름을 정합니다.
+        sheet1.title = 'resultSheet'
+
+    first_row = ["#########", "TESTIFY"]
+    print(str(first_row))
+    sheet1.append(first_row)
+
+    second_row = ["Title", "Hamming Loss", "Actual Genre", "Predict Genre"]
+    print(str(second_row))
+    sheet1.append(second_row)
+
+    # 각 영화별 hamming loss 값 및 실제/예측 장르 저장
+    for (i, movie) in zip(range(len(movie_names)), movie_names):
+        result_row = [movie, hl_results[i], str(true_labels[i]), str(sorted(pred_labels[i]))]
+        print(str(result_row))
+        sheet1.append(result_row)
+
+    average_row = ["average hl", hl_average]
+    print(str(average_row))
+    sheet1.append(average_row)
+
+    last_row = ["#########", "#########"]
+    print(str(last_row))
+    sheet1.append(last_row)
+
+    # excel 저장.
+    wb.save(filename=file_name)

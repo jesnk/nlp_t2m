@@ -15,7 +15,7 @@ import numpy as np
 import os
 from excel_write import *
 import math
-
+from sklearn.metrics import hamming_loss
 
 # return 
 def test_getSimilarity(path_input) :
@@ -45,19 +45,56 @@ def test_getPrecision(similSet, rankRange) :
     return precisionResult
 
 
-def testify(path_input) :
-    similSet = test_getSimilarity(path_input)
-    
-    precision_of_testSet = test_getPrecision(similSet, 3)
-    testSize = len(precision_of_testSet)
-    precisionRate = 0
-    for i in precision_of_testSet :
-        print("%30s : %2d ; %s" %(i[0], i[1], i[2]))
-        precisionRate += i[1]
-    precisionRate = precisionRate /  testSize
-    print("Average Val : %f" % precisionRate) 
-    print_and_save_result_to_excel(precision_of_testSet)
-    return precision_of_testSet
+# def testify(path_input) :
+#     similSet = test_getSimilarity(path_input)
+#
+#     precision_of_testSet = test_getPrecision(similSet, 3)
+#     testSize = len(precision_of_testSet)
+#     precisionRate = 0
+#     for i in precision_of_testSet :
+#         print("%30s : %2d ; %s" %(i[0], i[1], i[2]))
+#         precisionRate += i[1]
+#     precisionRate = precisionRate /  testSize
+#     print("Average Val : %f" % precisionRate)
+#     print_and_save_result_to_excel(precision_of_testSet)
+#     return precision_of_testSet
+# testify all the scripts in input Folder
+
+# @param [in]   datasource
+# @param [in]   path to save result
+def testify(path_input):
+    simil_set = test_getSimilarity(path_input)
+    genre_num = len(simil_set[0][1])
+    true_labels = []
+    pred_labels = []
+    true_labels_01 = np.zeros((len(simil_set), genre_num), dtype='i')
+    pred_labels_01 = np.zeros((len(simil_set), genre_num), dtype='i')
+    label_names = []
+    movie_names = []
+    hl_results = []
+    for s in simil_set[0][1]:
+        label = s[0]
+        label_names.append(label)
+    for (i, simil) in zip(range(len(simil_set)), simil_set):
+        name = simil[0]
+        movie_names.append(name)
+        pred_label = []
+        true_label = labeledGenre(name)
+        true_cnt = len(true_label)
+        true_labels.append(true_label)
+        pred_labels.append(pred_label)
+        for c in range(1, true_cnt+1):
+            pred_label.append(simil[1][-c][0])
+        for true in true_label:
+            true_labels_01[i][label_names.index(true)] = 1
+        for pred in pred_label:
+            pred_labels_01[i][label_names.index(pred)] = 1
+        hl = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
+        hl_results.append(hl)
+    hl_average = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
+    print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average)
+
+
 
 # calGenreSimilarity(dataSource.modelSet, )
 # Flag class
@@ -400,11 +437,6 @@ while (True) :
             print("%s  " % w, end = ' ' )
         print("")
         #dataSource.showModel(True)
-
-
-# testify all the scripts in input Folder
-# @param [in]   datasource
-# @param [in]   path to save result
 
 
 
