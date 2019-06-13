@@ -44,7 +44,7 @@ def test_getPrecision(similSet, rankRange) :
         precisionResult.append(precisionResult_unit); 
     return precisionResult
 
-
+#
 # def testify(path_input) :
 #     similSet = test_getSimilarity(path_input)
 #
@@ -71,6 +71,7 @@ def testify(path_input):
     label_names = []
     movie_names = []
     hl_results = []
+    rp_results = []
     for s in simil_set[0][1]:
         label = s[0]
         label_names.append(label)
@@ -81,15 +82,29 @@ def testify(path_input):
         true_label = labeledGenre(name)
         true_cnt = len(true_label)
         true_labels.append(true_label)
-        pred_labels.append(pred_label)
         for c in range(1, true_cnt+1):
             pred_label.append(simil[1][-c][0])
         for true in true_label:
             true_labels_01[i][label_names.index(true)] = 1
         for pred in pred_label:
             pred_labels_01[i][label_names.index(pred)] = 1
+        pred_labels.append(pred_label)
+
+        # R-precision
+        rp = 0
+        for label_index in range(len(label_names)):
+            if (true_labels_01[i][label_index] == 1) and (pred_labels_01[i][label_index] == 1):
+                rp += 1
+        rp /= true_cnt
+        rp_results.append(rp)
+        rp_average = np.mean(rp_results)
+
+        # hamming loss
         hl = hamming_loss(np.array(true_labels_01[i][:]), np.array(pred_labels_01[i][:]))
         hl_results.append(hl)
+    hl_average = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
+
+    # precision and recall
     precisions_per_label = []
     recalls_per_label = []
     true_labels_01 = true_labels_01.T
@@ -111,8 +126,9 @@ def testify(path_input):
             recall = tp / true_true
         precisions_per_label.append(precision)
         recalls_per_label.append(recall)
-    hl_average = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
+
     print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average)
+    print_and_save_result_to_excel_r_precision(movie_names, true_labels, pred_labels, rp_results, rp_average)
     print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label)
 
 #
