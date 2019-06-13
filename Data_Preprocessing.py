@@ -34,7 +34,7 @@ def preprocessing(text):
 
 def extractNouns(tokens):
     tagged_list = pos_tag(tokens)
-    nouns_list = [t[0] for t in tagged_list if t[1] == "NN" or t[1] == "NNP"]
+    nouns_list = [t[0] for t in tagged_list if t[1] == "NN"]
     return nouns_list
 
 def extractVerbs(tokens):
