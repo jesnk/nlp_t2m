@@ -15,7 +15,7 @@ import numpy as np
 import os
 from excel_write import *
 import math
-from sklearn.metrics import hamming_loss
+from sklearn.metrics import *
 
 # return 
 def test_getSimilarity(path_input) :
@@ -58,10 +58,9 @@ def test_getPrecision(similSet, rankRange) :
 #     print("Average Val : %f" % precisionRate)
 #     print_and_save_result_to_excel(precision_of_testSet)
 #     return precision_of_testSet
-# testify all the scripts in input Folder
+# # testify all the scripts in input Folder
 
-# @param [in]   datasource
-# @param [in]   path to save result
+
 def testify(path_input):
     simil_set = test_getSimilarity(path_input)
     genre_num = len(simil_set[0][1])
@@ -89,14 +88,53 @@ def testify(path_input):
             true_labels_01[i][label_names.index(true)] = 1
         for pred in pred_label:
             pred_labels_01[i][label_names.index(pred)] = 1
-        hl = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
+        hl = hamming_loss(np.array(true_labels_01[i][:]), np.array(pred_labels_01[i][:]))
         hl_results.append(hl)
+    precisions_per_label = []
+    recalls_per_label = []
+    true_labels_01 = true_labels_01.T
+    pred_labels_01 = pred_labels_01.T
+    for i in range(len(label_names)):
+        true_true = np.count_nonzero(true_labels_01[i] == 1)
+        pred_true = np.count_nonzero(pred_labels_01[i] == 1)
+        tp = 0
+        for j in range(len(pred_labels_01[i])):
+            if (true_labels_01[i][j] == 1) and (pred_labels_01[i][j] == 1):
+                tp += 1
+        if pred_true == 0:
+            precision = 0
+        else:
+            precision = tp / pred_true
+        if true_true == 0:
+            recall = -1 # no label
+        else:
+            recall = tp / true_true
+        precisions_per_label.append(precision)
+        recalls_per_label.append(recall)
     hl_average = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
     print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average)
+    print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label)
+
+#
+# # 유사도를 정규화 or 표준화해서 label set prediction을 수행하려했는데 실제 장르 결과와 유사도 범위간 매칭이 애매..
+# def testify_test(path_input):
+#     simil_set = test_getSimilarity(path_input)
+#     label_num = len(simil_set[0][1])
+#     simil_per_label = [[].append() for i in range(label_num)]
+#     print(simil_per_label)
+#     for simil in simil_set:
+#         print(simil[0])
+#         data = []
+#         for block in simil[1]:
+#             data.append(block[1])
+#         data_normalized = (data - min(data)) / (max(data) - min(data))
+#         data_std = (data - np.mean(data)) / np.std(data)
+#         simil_per_label[]
+#         print(data_normalized)
+#         print(data_std)
 
 
 
-# calGenreSimilarity(dataSource.modelSet, )
 # Flag class
 class Flags :
     def __init__(self) :
