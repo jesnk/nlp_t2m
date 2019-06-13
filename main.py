@@ -15,7 +15,7 @@ import numpy as np
 import os
 from excel_write import *
 import math
-
+import new
 
 # return 
 def test_getSimilarity(path_input) :
@@ -83,7 +83,7 @@ class DataReposit :
     
     # indexing
     def indexing(self) :
-        self.indexedSet = indexingScripts()
+        self.indexedSet = indexingScripts("./data")
     
     # 벡터 공간을 만듬. 만들어진 벡터 공간 틀을 이용해 나중에 장르 벡터, 쿼리 벡터들을 만든다. 
     def create_modelFrame(self) :
@@ -299,21 +299,6 @@ def make_and_scale_queryModel (indexedQuery, modelFrame, ds) :
     queryModel = applying_idf_to_model(ds.modelIdf , queryModelSet[0])
     return queryModel
 
-# 삭제 예정, 위의 것으로 대체 
-def make_model_to_query(indexedQuery, modelFrame) :
-    
-    tmpModel = [ indexedQuery[0], modelFrame[:] ]
-    for word in indexedQuery[1] :
-        # word : ( term, tf )
-        if [word[0],0] in tmpModel[1] :
-            tmpIdx = tmpModel[1].index([word[0],0])
-            tmpModel[1][tmpIdx] = [word[0], word[1]]
-    modelScaler([tmpModel],1000)
-
-
-    return tmpModel
-
-
 # input 폴더 안에서 name 파일을 찾아 읽고 반환 
 def textFileImport(name) :
     if not (glob("./input/%s.txt" % name)) :
@@ -334,10 +319,7 @@ def labeledGenre(name) :
 
     return ret
 
-
-
-
-
+'''
 # makeNewModelData :
 # True 이면, 장르 벡터 모델을 생성한다. 
 # False이면, 계산하여 저장해 놓은 모델을 불러온다 indexedModel.t2m 으로 저장되어있음
@@ -407,7 +389,7 @@ while (True) :
 # @param [in]   path to save result
 
 
-
+'''
 
 
 
