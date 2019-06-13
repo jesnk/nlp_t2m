@@ -139,7 +139,7 @@ def print_and_save_result_to_excel_r_precision(movie_names, true_labels, pred_la
     wb.save(filename=file_name)
 
 
-def print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label):
+def print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label, fmeasure_per_label):
     file_name = 'result_precision_recall.xlsx'
 
     if os.path.isfile(file_name):
@@ -159,27 +159,30 @@ def print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls
     print(str(first_row))
     sheet1.append(first_row)
 
-    second_row = ["Genre", "Precision", "Recall"]
+    second_row = ["Genre", "Precision", "Recall", "F-measure"]
     print(str(second_row))
     sheet1.append(second_row)
 
     precision_avg = 0
     recall_avg = 0
+    fmeasure_avg = 0
     actual_label_cnt = 0
     # 각 영화별 hamming loss 값 및 실제/예측 장르 저장
     for (i, label) in zip(range(len(label_names)), label_names):
         if recalls_per_label[i] != -1:
-            result_row = [label, precisions_per_label[i], recalls_per_label[i]]
+            result_row = [label, precisions_per_label[i], recalls_per_label[i], fmeasure_per_label[i]]
             print(str(result_row))
             sheet1.append(result_row)
 
             precision_avg += precisions_per_label[i]
             recall_avg += recalls_per_label[i]
+            fmeasure_avg += fmeasure_per_label[i]
             actual_label_cnt += 1
 
     precision_avg /= actual_label_cnt
     recall_avg /= actual_label_cnt
-    average_row = ["Average", precision_avg, recall_avg]
+    fmeasure_avg /= actual_label_cnt
+    average_row = ["Average", precision_avg, recall_avg, fmeasure_avgZ]
     print(str(average_row))
     sheet1.append(average_row)
 

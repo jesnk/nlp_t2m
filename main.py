@@ -107,6 +107,7 @@ def testify(path_input):
     # precision and recall
     precisions_per_label = []
     recalls_per_label = []
+    fmeasure_per_label = []
     true_labels_01 = true_labels_01.T
     pred_labels_01 = pred_labels_01.T
     for i in range(len(label_names)):
@@ -116,20 +117,24 @@ def testify(path_input):
         for j in range(len(pred_labels_01[i])):
             if (true_labels_01[i][j] == 1) and (pred_labels_01[i][j] == 1):
                 tp += 1
-        if pred_true == 0:
+        if pred_true == 0: # prevent division by 0
             precision = 0
         else:
             precision = tp / pred_true
-        if true_true == 0:
-            recall = -1 # no label
+        if true_true == 0: # prevent no label case
+            recall = -1
         else:
             recall = tp / true_true
+            if precision + recall == 0: # prevent division by 0
+                fmeasure = 0
+            else:
+                fmeasure = (2 * precision * recall) / (precision + recall)
         precisions_per_label.append(precision)
         recalls_per_label.append(recall)
-
+        fmeasure_per_label.append(fmeasure)
     print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average)
     print_and_save_result_to_excel_r_precision(movie_names, true_labels, pred_labels, rp_results, rp_average)
-    print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label)
+    print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label, fmeasure_per_label)
 
 #
 # # 유사도를 정규화 or 표준화해서 label set prediction을 수행하려했는데 실제 장르 결과와 유사도 범위간 매칭이 애매..
