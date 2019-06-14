@@ -21,11 +21,11 @@ class TrainData :
         
     def saveIndexData(self) :
         with open("model.t2m", "wb") as file :
-            pickle.dump(self,file)
+            pickle.dump(self.indexSet,file)
             print("Index Data is Saved")
     def loadIndexData(self,path_modelDataDir,num) :
         with open(path_modelDataDir+"/model_"+str(num)+".t2m", "rb") as file :
-            self = pickle.load(file)
+            self.indexSet = pickle.load(file)
             
     def getIndexData(self) :
         return self.indexSet
@@ -129,10 +129,10 @@ class GenreDeducer :
 
 
 genreDeducer = GenreDeducer("./data","./input","./model")
-#genreDeducer.doIndex()
-#genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndexData("./model",1)
-genreDeducer.doModeling()
+genreDeducer.doIndex()
+genreDeducer.trainData.saveIndexData()
+#genreDeducer.loadIndexData("./model",1)
+#genreDeducer.doModeling()
 
 
 
