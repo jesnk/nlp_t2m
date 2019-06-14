@@ -1,5 +1,6 @@
 import openpyxl
 import os
+import numpy as np
 
 #저장 할 파일 이름
 
@@ -53,3 +54,142 @@ def print_and_save_result_to_excel(testResult) :
     sheet1.append(last_row)
     # excel 저장.
     wb.save(filename=file_name)
+
+
+def print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average):
+    file_name = 'result_hammingloss.xlsx'
+
+    if os.path.isfile(file_name):
+        # file 있을시 load
+        wb = openpyxl.load_workbook(file_name)
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+    else:
+        # file 없을시 생성
+        wb = openpyxl.Workbook()
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+        # 시트의 이름을 정합니다.
+        sheet1.title = 'resultSheet'
+
+    first_row = ["#########", "TESTIFY"]
+    print(str(first_row))
+    sheet1.append(first_row)
+
+    second_row = ["Title", "Hamming Loss", "Actual Genre", "Predict Genre"]
+    print(str(second_row))
+    sheet1.append(second_row)
+
+    # 각 영화별 hamming loss 값 및 실제/예측 장르 저장
+    for (i, movie) in zip(range(len(movie_names)), movie_names):
+        result_row = [movie, hl_results[i], str(true_labels[i]), str(sorted(pred_labels[i]))]
+        print(str(result_row))
+        sheet1.append(result_row)
+
+    average_row = ["average hl", hl_average]
+    print(str(average_row))
+    sheet1.append(average_row)
+
+    last_row = ["#########", "#########"]
+    print(str(last_row))
+    sheet1.append(last_row)
+
+    # excel 저장.
+    wb.save(filename=file_name)
+
+def print_and_save_result_to_excel_r_precision(movie_names, true_labels, pred_labels, rp_results, rp_average):
+    file_name = 'result_rprecision.xlsx'
+
+    if os.path.isfile(file_name):
+        # file 있을시 load
+        wb = openpyxl.load_workbook(file_name)
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+    else:
+        # file 없을시 생성
+        wb = openpyxl.Workbook()
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+        # 시트의 이름을 정합니다.
+        sheet1.title = 'resultSheet'
+
+    first_row = ["#########", "TESTIFY"]
+    print(str(first_row))
+    sheet1.append(first_row)
+
+    second_row = ["Title", "Hamming Loss", "Actual Genre", "Predict Genre"]
+    print(str(second_row))
+    sheet1.append(second_row)
+
+    # 각 영화별 hamming loss 값 및 실제/예측 장르 저장
+    for (i, movie) in zip(range(len(movie_names)), movie_names):
+        result_row = [movie, rp_results[i], str(true_labels[i]), str(sorted(pred_labels[i]))]
+        print(str(result_row))
+        sheet1.append(result_row)
+
+    average_row = ["average hl", rp_average]
+    print(str(average_row))
+    sheet1.append(average_row)
+
+    last_row = ["#########", "#########"]
+    print(str(last_row))
+    sheet1.append(last_row)
+
+    # excel 저장.
+    wb.save(filename=file_name)
+
+
+def print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label, fmeasure_per_label):
+    file_name = 'result_precision_recall.xlsx'
+
+    if os.path.isfile(file_name):
+        # file 있을시 load
+        wb = openpyxl.load_workbook(file_name)
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+    else:
+        # file 없을시 생성
+        wb = openpyxl.Workbook()
+        # 데이터를 넣을 시트를 활성화합니다.
+        sheet1 = wb.active
+        # 시트의 이름을 정합니다.
+        sheet1.title = 'resultSheet'
+
+    first_row = ["#########", "TESTIFY"]
+    print(str(first_row))
+    sheet1.append(first_row)
+
+    second_row = ["Genre", "Precision", "Recall", "F-measure"]
+    print(str(second_row))
+    sheet1.append(second_row)
+
+    precision_avg = 0
+    recall_avg = 0
+    fmeasure_avg = 0
+    actual_label_cnt = 0
+    # 각 영화별 hamming loss 값 및 실제/예측 장르 저장
+    for (i, label) in zip(range(len(label_names)), label_names):
+        if recalls_per_label[i] != -1:
+            result_row = [label, precisions_per_label[i], recalls_per_label[i], fmeasure_per_label[i]]
+            print(str(result_row))
+            sheet1.append(result_row)
+
+            precision_avg += precisions_per_label[i]
+            recall_avg += recalls_per_label[i]
+            fmeasure_avg += fmeasure_per_label[i]
+            actual_label_cnt += 1
+
+    precision_avg /= actual_label_cnt
+    recall_avg /= actual_label_cnt
+    fmeasure_avg /= actual_label_cnt
+    average_row = ["Average", precision_avg, recall_avg, fmeasure_avgZ]
+    print(str(average_row))
+    sheet1.append(average_row)
+
+    last_row = ["#########", "#########"]
+    print(str(last_row))
+    sheet1.append(last_row)
+
+    # excel 저장.
+    wb.save(filename=file_name)
+
