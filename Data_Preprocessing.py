@@ -69,7 +69,7 @@ def indexingScripts(path_trainDataDir) :
             data = data + f.read()
         print("processing... %s" % i)
         preprocessed = preprocessing(data)
-        fdist=FreqDist(preprocessed)
+        fdist = FreqDist(preprocessed)
         freq = [i, fdist.most_common(100)]
         total_freq += [freq]
         print(freq,'\n')
