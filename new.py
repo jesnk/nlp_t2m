@@ -26,7 +26,12 @@ class TrainData :
             print("Index Data is Saved")
     def loadIndexData(self,path_indexDatasDir,num) :
         with open(path_indexDatasDir+"/indexData_"+str(num)+".t2m", "rb") as file :
-            self.indexSet = pickle.load(file)
+            tmpObject = pickle.load(file)
+            if type(tmpObject) == list :
+                self.indexSet = tmpObject
+            else :
+                self.indexSet = tmpObject.indexSet
+                
             print("Index Data is loaded")
     def getIndexData(self) :
         return self.indexSet
@@ -393,7 +398,7 @@ class QuerySystem :
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex(2)
+genreDeducer.loadIndex(1)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
