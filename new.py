@@ -184,8 +184,12 @@ class Testify :
     def getModelDistance(self,genreVectorModel, queryVectorModel) :
         #genere : ["title', [ [term,1], [term, tf] .. ]]
         distance = 0
-        for index in range(0, len(genreVectorModel)) :
-            distance += np.square(genreVectorModel[1][index][1] - queryVectorModel[1][index][1])
+        for index in range(0, len(genreVectorModel[1])) :
+            # for debug
+            a = genreVectorModel[1][index][1] / 1000
+            b = queryVectorModel[1][index][1] / 1000
+
+            distance += np.square(a - b)
         return distance
         
     def getGenreSimilarityResults(self,genreVectorModelSet, queryVectorModelSet) :
@@ -195,7 +199,8 @@ class Testify :
             for genreVectorModel in genreVectorModelSet :
                 distance = self.getModelDistance(genreVectorModel, queryVectorModel)
                 distances.append( [genreVectorModel[0], distance])
-            result_unit = [queryVectorModel[0], sorted(distances, key = lambda i : i[1], reverse = False)]
+                # False 가 아닌 True에 맞게 되어있음
+            result_unit = [queryVectorModel[0], sorted(distances, key = lambda i : i[1], reverse = False )]
             results.append(result_unit)
         return results
     def createQueryVectorModelSet(self) :
@@ -328,8 +333,8 @@ class QuerySystem :
             true_label = getLabeledGenre("./trainData",name)
             true_cnt = len(true_label)
             true_labels.append(true_label)
-            for c in range(1, true_cnt+1):
-                pred_label.append(simil[1][-c][0])
+            for c in range(0, true_cnt):
+                pred_label.append(simil[1][c][0])
             for true in true_label:
                 true_labels_01[i][label_names.index(true)] = 1
             for pred in pred_label:
@@ -388,7 +393,7 @@ class QuerySystem :
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex(1)
+genreDeducer.loadIndex(2)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
