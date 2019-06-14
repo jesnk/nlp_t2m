@@ -72,6 +72,7 @@ class Model :
         self.idf = {}
         numOfD = len(self.genreModel)
         for term in self.df :
+            # idf calculate
             self.idf[term] = math.log(1 + self.df[term],2)
             self.idf[term] = numOfD / self.idf[term]
         print("Complete Creating idf Dictionary")
@@ -146,9 +147,9 @@ class GenreDeducer :
 
 
 genreDeducer = GenreDeducer("./data","./input","./model")
-#genreDeducer.doIndex()
+genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex("./model",1)
+#genreDeducer.loadIndex("./model",1)
 genreDeducer.doModeling(True,True)
 
 genreDeducer.showGenreModelRank(5)

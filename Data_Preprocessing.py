@@ -59,6 +59,8 @@ def indexingScripts(path_trainDataDir) :
     for i in genre_list[:]:
         print("Indexing Train Data, Genre : %s" % i )
         path_file = path_trainDataDir+'/'+i+'/'
+        if (i == '.DS_Store') :
+            continue
         file_list = os.listdir(path_file)
         data = ""
         for j in file_list[:]:
@@ -69,6 +71,12 @@ def indexingScripts(path_trainDataDir) :
             data = data + f.read()
         print("processing... %s" % i)
         preprocessed = preprocessing(data)
+        onlyNoun = True
+        onlyVerb = False
+        if (onlyNoun) :
+            preprocessed = extractNouns(preprocessed)
+        if (onlyVerb) :
+            preprocessed = extractVerbs(preprocessed)
         fdist = FreqDist(preprocessed)
         freq = [i, fdist.most_common(100)]
         total_freq += [freq]
