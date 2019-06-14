@@ -86,7 +86,7 @@ def indexingScripts(path_trainDataDir) :
 
 
 # 테스트 쿼리 인덱싱
-def indexingTestFiles(path_input) :
+def indexingTestFiles(path_input, onlyNoun = False, onlyVerb = False) :
     file_list = os.listdir(path_input) 
     ret_list = [] 
     for f in file_list[:] :
@@ -96,6 +96,12 @@ def indexingTestFiles(path_input) :
         t = open(path_input+"/"+f, 'rt', encoding = 'utf-8') 
         text = t.read()
         preprocessed = preprocessing(text)
+        
+        if (onlyNoun) :
+            preprocessed = extractNouns(preprocessed)
+        if (onlyVerb) :
+            preprocessed = extractVerbs(preprocessed)
+        
         fdist = FreqDist(preprocessed)
         # 100개 단어를 추린다. 
         freq = [ f[:-4] , fdist.most_common(100)]

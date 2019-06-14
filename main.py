@@ -156,7 +156,6 @@ class DataReposit :
         
         distances = []
 
-
         for g in self.modelSet :
             # 각 장르 벡터 모델 g 에 대해 계산
             distance = calModelDistance(g, self.queryModel[0]) # queryModel : [ ['title', [[term, tf], [term2, tf2]...] ] ]
