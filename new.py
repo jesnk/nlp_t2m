@@ -23,7 +23,10 @@ class TrainData :
         with open("model.t2m", "wb") as file :
             pickle.dump(self,file)
             print("Index Data is Saved")
-
+    def loadIndexData(self,path_modelDataDir,num) :
+        with open(path_modelDataDir+"/model_"+str(num)+".t2m", "rb") as file :
+            self = pickle.load(file)
+            
     def getIndexData(self) :
         return self.indexSet
 class Model :
@@ -49,7 +52,7 @@ class Model :
                     tmpIdx = tmpModel[1].index([word[0],0])
                     tmpModel[1][tmpIdx] = [word[0], word[1]]
 
-                    if word[0] in self.idf.key() :
+                    if word[0] in self.idf.keys() :
                         self.df[word[0]] += 1
                     else :
                         self.df[word[0]] = 1
@@ -87,7 +90,7 @@ class Model :
             for term in genre :
                 print("%s : %5d" % (term[0],term[1]), end = '')
             print("")
-
+ 
 # Model will be Scaled
 def modelScaling(model,size) :
     total_tf = 0
@@ -116,10 +119,20 @@ class GenreDeducer :
     def doIndex(self) :
         self.trainData.indexScripts(self.trainData.path_trainDataDir)
 
-genreDeducer = GenreDeducer("./data","./input","./model")
-genreDeducer.doIndex()
-genreDeducer.trainData.saveIndexData()
+    def doModeling(self) :
+        self.model.createFrame()
+        self.model.createGenreModel()
+    def loadIndexData(self,path_modelDataDir,num) :
+        self.trainData.loadIndexData(path_modelDataDir,num)
+    def showGenreModelRank(self) :
+        self.model.showGenreModelRank(5)
 
+
+genreDeducer = GenreDeducer("./data","./input","./model")
+#genreDeducer.doIndex()
+#genreDeducer.trainData.saveIndexData()
+genreDeducer.loadIndexData("./model",1)
+genreDeducer.doModeling()
 
 
 
