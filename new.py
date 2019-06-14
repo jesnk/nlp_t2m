@@ -7,7 +7,7 @@ import os
 from excel_write import *
 import math 
 from glob import *
-
+from sklearn.metrics import *
 
 
 
@@ -254,7 +254,13 @@ class Testify :
         return ret
 
 
-
+def getLabeledGenre(path_trainDataDir, name) :
+    genre_list = os.listdir(path_trainDataDir)
+    ret = []
+    for gd in genre_list :
+        if glob(path_trainDataDir+"/%s/%s.txt" % (gd, name)) :
+            ret.append(gd)
+    return ret
 
 class QuerySystem :
     def __init__(self,TestifyObject) :
@@ -284,7 +290,7 @@ class QuerySystem :
         if commandBuf == 'testify' :
             print("Get Genre from TestDatas")
             print("R-precision")
-            self.show_save_precision(3)
+            self.testify()
         elif commandBuf == 'exit' :
             self.finishFlag = True
 
@@ -300,7 +306,82 @@ class QuerySystem :
             totalPrecisionRateSum += i[1]
         totalPrecisionRate = totalPrecisionRateSum/testDataSize
         print("Average Precision : %f" % totalPrecisionRate)
-        print_and_save_result_to_excel(testResult)
+
+    def testify(self):
+        simil_set = self.testifySystem.testingResult
+        genre_num = len(simil_set[0][1])
+        true_labels = []
+        pred_labels = []
+        true_labels_01 = np.zeros((len(simil_set), genre_num), dtype='i')
+        pred_labels_01 = np.zeros((len(simil_set), genre_num), dtype='i')
+        label_names = []
+        movie_names = []
+        hl_results = []
+        rp_results = []
+        for s in simil_set[0][1]:
+            label = s[0]
+            label_names.append(label)
+        for (i, simil) in zip(range(len(simil_set)), simil_set):
+            name = simil[0]
+            movie_names.append(name)
+            pred_label = []
+            true_label = getLabeledGenre("./trainData",name)
+            true_cnt = len(true_label)
+            true_labels.append(true_label)
+            for c in range(1, true_cnt+1):
+                pred_label.append(simil[1][-c][0])
+            for true in true_label:
+                true_labels_01[i][label_names.index(true)] = 1
+            for pred in pred_label:
+                pred_labels_01[i][label_names.index(pred)] = 1
+            pred_labels.append(pred_label)
+
+            # R-precision
+            rp = 0
+            for label_index in range(len(label_names)):
+                if (true_labels_01[i][label_index] == 1) and (pred_labels_01[i][label_index] == 1):
+                    rp += 1
+            rp /= true_cnt
+            rp_results.append(rp)
+            rp_average = np.mean(rp_results)
+
+            # hamming loss
+            hl = hamming_loss(np.array(true_labels_01[i][:]), np.array(pred_labels_01[i][:]))
+            hl_results.append(hl)
+        hl_average = hamming_loss(np.array(true_labels_01), np.array(pred_labels_01))
+
+        # precision and recall
+        precisions_per_label = []
+        recalls_per_label = []
+        fmeasure_per_label = []
+        true_labels_01 = true_labels_01.T
+        pred_labels_01 = pred_labels_01.T
+        for i in range(len(label_names)):
+            true_true = np.count_nonzero(true_labels_01[i] == 1)
+            pred_true = np.count_nonzero(pred_labels_01[i] == 1)
+            tp = 0
+            for j in range(len(pred_labels_01[i])):
+                if (true_labels_01[i][j] == 1) and (pred_labels_01[i][j] == 1):
+                    tp += 1
+            if pred_true == 0: # prevent division by 0
+                precision = 0
+            else:
+                precision = tp / pred_true
+            if true_true == 0: # prevent no label case
+                recall = -1
+            else:
+                recall = tp / true_true
+                if precision + recall == 0: # prevent division by 0
+                    fmeasure = 0
+                else:
+                    fmeasure = (2 * precision * recall) / (precision + recall)
+            precisions_per_label.append(precision)
+            recalls_per_label.append(recall)
+            fmeasure_per_label.append(fmeasure)
+        print_and_save_result_to_excel_hl(movie_names, true_labels, pred_labels, hl_results, hl_average)
+        print_and_save_result_to_excel_r_precision(movie_names, true_labels, pred_labels, rp_results, rp_average)
+        print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls_per_label, fmeasure_per_label)
+
 
 
 

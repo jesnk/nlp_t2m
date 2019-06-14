@@ -433,7 +433,7 @@ def labeledGenre(name) :
 
 
 
-
+'''
 # makeNewModelData :
 # True 이면, 장르 벡터 모델을 생성한다. 
 # False이면, 계산하여 저장해 놓은 모델을 불러온다 indexedModel.t2m 으로 저장되어있음
@@ -499,7 +499,7 @@ while (True) :
 
 
 
-
+'''
 
 
 
