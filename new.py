@@ -80,8 +80,8 @@ class GenreVectorModel :
         numOfD = len(self.genreVectorModelSet)
         for term in self.df :
             # idf calculate
-            self.idf[term] = math.log(10 + (numOfD / 1 + self.df[term]),10)
-
+            self.idf[term] = math.log(1 + self.df[term],2)
+            self.idf[term] = numOfD / self.idf[term]
 
         print("Complete Creating idf Dictionary")
     
@@ -399,7 +399,7 @@ class QuerySystem :
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex(50)
+genreDeducer.loadIndex(700)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
