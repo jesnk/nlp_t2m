@@ -80,8 +80,9 @@ class GenreVectorModel :
         numOfD = len(self.genreVectorModelSet)
         for term in self.df :
             # idf calculate
-            self.idf[term] = math.log(1 + self.df[term],2)
-            self.idf[term] = numOfD / self.idf[term]
+            self.idf[term] = math.log(10 + (numOfD / 1 + self.df[term]),10)
+
+
         print("Complete Creating idf Dictionary")
     
     def doScalingToGenreVectorSet(self,size=1000) :
@@ -214,6 +215,7 @@ class Testify :
             processedQueryVectorModel = self.queryVectorModelProcessing(testQuery,self.genreVectorModel.frame, self.genreVectorModel.idf)
             self.queryVectorModelSet.append(processedQueryVectorModel)
 
+    # 쿼리 모델 프로세싱
     def queryVectorModelProcessing(self, indexedQuery, vectorFrame, idf) :
         queryVectorModel_tmp = [ indexedQuery[0], vectorFrame[:]]
         # Value copy
@@ -227,8 +229,7 @@ class Testify :
             term[1] = term[1] * self.idf[term[0]]
         return queryVectorModel_tmp
     def testing(self) :
-        # 테스트 파일들 인덱싱
-        
+        # 테스트 파일들은 인덱싱 된 상태
         queryVectorModelSet = []
         # 테스트 파일 전처리
         for queryVectorModel in self.indexedTestDatas :
@@ -398,7 +399,7 @@ class QuerySystem :
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex(1)
+genreDeducer.loadIndex(500)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
@@ -406,7 +407,7 @@ genreDeducer.initQuerySystem()
 genreDeducer.querySystem.run()
 
 
-genreDeducer.showGenreVectorRank(5)
+#genreDeducer.showGenreVectorRank(5)
 
 
 print("Hi, My name is new.py")
