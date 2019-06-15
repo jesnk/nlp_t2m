@@ -13,11 +13,11 @@ Matplotlib, Numpy ...
 
 - Team Member
 
-| id         | name   |
-|------------|--------|
-| aileenpark | 박나윤 |
-| jesn1219   | 강제순 |
-| KooYS      | 구영서 |
-| minji0320  | 김민지 |
-| SimDaeBeom | 심대범 |
-| simba328   | 이설희 |
+| ID         | name   | position | studentID |
+|------------|--------|----------|-----------|
+| aileenpark | 박나윤 | leader   | 20140076  |
+| jesn1219   | 강제순 | member   | 20170937  |
+| KooYS      | 구영서 | member   | 20130398  |
+| minji0320  | 김민지 | member   | 20153029  |
+| SimDaeBeom | 심대범 | member   | 20160030  |
+| simba328   | 이설희 | member   | 20162406  |
