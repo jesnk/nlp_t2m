@@ -144,12 +144,12 @@ class GenreDeducer :
         self.genreVectorModel.init(self.trainData)
         self.genreVectorModel.createFrame()
         self.genreVectorModel.createGenreVector(False)
-        
+        '''
         if idf :
             self.genreVectorModel.applyingIdfToGenreVectorModelSet()
         if scaling :
             self.genreVectorModel.doScalingToGenreVectorSet(scalingSize)
-        
+        '''
     def loadIndex(self,indexData_num = 1) :
         self.trainData.loadIndexData(self.path_indexDatasDir,indexData_num)
     
@@ -166,7 +166,7 @@ class GenreDeducer :
 
 class Testify :
     def __init__(self, GenreVectorModelObject, vectorFrame, idf,makeNewTestIndex = False, path_trainDataDir = "./trainData",path_indexDatasDir= "./indexDatas", path_testDataDir = "./testData") :
-        # makeNewTestIndex = FAlse
+        print("He")
         self.path_trainDataDir = path_trainDataDir
         self.path_indexDatasDir = path_indexDatasDir
         self.path_testDataDir = path_testDataDir
@@ -293,6 +293,8 @@ class QuerySystem :
 
 
     def querying(self, vectorFrame) :
+        print("Input movie name to Classify Genre. ex) for Blade.txt :  >> Blade   ")
+        print("If you want to see Graph, type >> show  ")
         print("To testify & save result to excel file, type >> testify")
         print("To terminate pregram, type >> exit")
         
@@ -332,7 +334,6 @@ class QuerySystem :
             label = s[0]
             label_names.append(label)
         for (i, simil) in zip(range(len(simil_set)), simil_set):
-            print("Hey, ", i, "  its  ", simil )
             name = simil[0]
             movie_names.append(name)
             pred_label = []
@@ -397,21 +398,17 @@ class QuerySystem :
 
 
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
-
-# 새로운 TrainData 인덱싱 하는 경우
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-
-# 기존 indexData 로드
-genreDeducer.loadIndex(700)
+genreDeducer.loadIndex(1)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
 genreDeducer.initQuerySystem()
-
+#genreDeducer.showGenreVectorRank(10)
 genreDeducer.querySystem.run()
 
-# For debuging
-#genreDeducer.showGenreVectorRank(10)
 
-print("Program terminated")
+
+
+print("Hi, My name is new.py")
