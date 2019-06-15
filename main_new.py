@@ -1,4 +1,4 @@
-import main
+import main_old
 import pickle
 from Data_Preprocessing import *
 import matplotlib as plt
@@ -166,7 +166,6 @@ class GenreDeducer :
 
 class Testify :
     def __init__(self, GenreVectorModelObject, vectorFrame, idf,makeNewTestIndex = False, path_trainDataDir = "./trainData",path_indexDatasDir= "./indexDatas", path_testDataDir = "./testData") :
-        print("He")
         self.path_trainDataDir = path_trainDataDir
         self.path_indexDatasDir = path_indexDatasDir
         self.path_testDataDir = path_testDataDir
@@ -398,15 +397,12 @@ class QuerySystem :
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex(1)
+genreDeducer.loadIndex(700)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
 genreDeducer.initQuerySystem()
-genreDeducer.showGenreVectorRank(10)
-#genreDeducer.querySystem.run()
+#genreDeducer.showGenreVectorRank(10)
+genreDeducer.querySystem.run()
 
-
-
-
-print("Hi, My name is new.py")
+print("Program terminated")
