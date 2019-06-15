@@ -293,8 +293,6 @@ class QuerySystem :
 
 
     def querying(self, vectorFrame) :
-        print("Input movie name to Classify Genre. ex) for Blade.txt :  >> Blade   ")
-        print("If you want to see Graph, type >> show  ")
         print("To testify & save result to excel file, type >> testify")
         print("To terminate pregram, type >> exit")
         
