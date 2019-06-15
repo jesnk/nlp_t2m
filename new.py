@@ -144,11 +144,12 @@ class GenreDeducer :
         self.genreVectorModel.init(self.trainData)
         self.genreVectorModel.createFrame()
         self.genreVectorModel.createGenreVector(False)
+        '''
         if idf :
             self.genreVectorModel.applyingIdfToGenreVectorModelSet()
         if scaling :
             self.genreVectorModel.doScalingToGenreVectorSet(scalingSize)
-
+        '''
     def loadIndex(self,indexData_num = 1) :
         self.trainData.loadIndexData(self.path_indexDatasDir,indexData_num)
     
@@ -399,15 +400,15 @@ class QuerySystem :
 genreDeducer = GenreDeducer("./trainData","./testCase","./indexDatas")
 #genreDeducer.doIndex()
 #genreDeducer.trainData.saveIndexData()
-genreDeducer.loadIndex(700)
+genreDeducer.loadIndex(1)
 genreDeducer.doVectorModeling(idf=True,scaling=True,scalingSize=10000)
 
 genreDeducer.initTestifySystem()
 genreDeducer.initQuerySystem()
-genreDeducer.querySystem.run()
+genreDeducer.showGenreVectorRank(10)
+#genreDeducer.querySystem.run()
 
 
-#genreDeducer.showGenreVectorRank(5)
 
 
 print("Hi, My name is new.py")
