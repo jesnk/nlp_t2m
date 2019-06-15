@@ -182,7 +182,7 @@ def print_and_save_result_to_excel_pr(label_names, precisions_per_label, recalls
     precision_avg /= actual_label_cnt
     recall_avg /= actual_label_cnt
     fmeasure_avg /= actual_label_cnt
-    average_row = ["Average", precision_avg, recall_avg, fmeasure_avgZ]
+    average_row = ["Average", precision_avg, recall_avg, fmeasure_avg]
     print(str(average_row))
     sheet1.append(average_row)
 
